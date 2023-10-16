@@ -6,6 +6,7 @@ function App() {
   const [number, setNumber] = useState(false);
   const [character, setCharacter] = useState(false);
   const [password, setPassword] = useState("");
+  const [copy, setCopy] = useState("Copy");
 
   const passwordGenerator = useCallback(() => {
     let pass = "";
@@ -14,7 +15,7 @@ function App() {
     if (number) str += "01234567890";
     if (character) str += '!@#$%^&*()_+={}":>?~`[]';
 
-    for (let i = 0; i <= length; i++) {
+    for (let i = 1; i <= length; i++) {
       let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
@@ -23,7 +24,14 @@ function App() {
 
   useEffect(() => {
     passwordGenerator();
-  }, [length, number, character]);
+  }, [length, number, character, copy]);
+
+  let passwordRef = useRef(null);
+
+  const handleCopy = useCallback(() => {
+    window.navigator.clipboard.writeText(password);
+    setCopy("Copied");
+  }, [password]);
 
   return (
     <>
@@ -36,9 +44,13 @@ function App() {
             className="outline-none w-full py-1 px-3"
             placeholder="Password"
             readOnly
+            ref={passwordRef}
           ></input>
-          <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0">
-            copy
+          <button
+            className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0"
+            onClick={handleCopy}
+          >
+            {copy}
           </button>
         </div>
         <div className="flex text-sm gap-x-2">
